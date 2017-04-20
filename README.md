@@ -1,1 +1,1 @@
-Repositorio de prácticas en el Observatorio Astronómico de Montegancedo (UPM), en colaboración con el GrupoCíclope.
+Weather Station related software, implemented for the astronomy project of GrupoCíclope, at the Montegancedo Observatory (UPM).
