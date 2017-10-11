@@ -1,1 +1,1 @@
-Estación Meteorológica
+Software used for the Weather Station
