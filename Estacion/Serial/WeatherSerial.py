@@ -10,7 +10,7 @@ prev_time = 0.0
 curr_time = 0.0
 cicle_time = 180 #180 segundos de espera hasta cambiar el estado a No Operativo
 ######LINUX######
-xbee=serial.Serial('/dev/ttyUSB1',9600) #ACMx / USBx (x = 1 o 0)
+xbee=serial.Serial('/dev/ttyUSB0',9600) #ACMx / USBx (x = 1 o 0)
 
 ######WINDOWS#####
 #xbee=serial.Serial('COM7',9600) #comprobar el numero de COM
@@ -63,6 +63,8 @@ while True:
 
             print "Datos validos y guardados"
         else:
+	    print "paquete recibido: "
+	    print package
             print "Datos invalidos"
     elif(curr_time-prev_time>=cicle_time):
         prev_time = curr_time
