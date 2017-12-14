@@ -1,6 +1,8 @@
 #Mantiene la escucha constante a traves de serial.
 import serial
 import time
+
+puerto_serie = '/dev/ttyUSB0'
 sec_counter = 6 #security counter
 extension = ".txt"
 mes = "00"
@@ -10,8 +12,11 @@ prev_time = 0.0
 curr_time = 0.0
 cicle_time = 180 #180 segundos de espera hasta cambiar el estado a No Operativo
 ######LINUX######
-xbee=serial.Serial('/dev/ttyUSB0',9600) #ACMx / USBx (x = 1 o 0)
-
+try:
+    xbee=serial.Serial(puerto_serie,9600) #ACMx / USBx (x = 1 o 0)
+except:
+    print "Puerto serie incorrecto: {}".format(puerto_serie);
+    exit(-1)
 ######WINDOWS#####
 #xbee=serial.Serial('COM7',9600) #comprobar el numero de COM
 
