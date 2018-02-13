@@ -88,9 +88,21 @@ printData()
 def sendData():
     getData()
     #datos listos para enviar
-    datos={"Estacion":[{"Estado":info.status},{"Fecha":info.fecha},{"Hora":info.hora},{"Temperatura":info.temperatura},{"Presion":info.presion},{"Humedad":info.humedad},{"Precipitacion":info.precipitacion},{"Velocidad viento":info.velViento},{"Direccion viento":info.dirViento}]}
+    datos={"Estacion":{"Estado":info.status,
+        "Fecha":info.fecha,
+        "Hora":info.hora,
+        "Temperatura":info.temperatura,
+        "Presion":info.presion,
+        "Humedad":info.humedad,
+        "Precipitacion":info.precipitacion,
+        "Velocidad viento":info.velViento,
+        "Direccion viento":info.dirViento}}
     return json.dumps(datos)
 
+@app.route('/api/estacion/montegancedo/alarm')   
+def start():
+    app.run(host='0.0.0.0',port=5000)
+    
 if __name__ == "__main__":
-    app.run(host='127.0.0.1',port=5000)
-    #app.run(host='0.0.0.0',port=80)
+    #app.run(host='127.0.0.1',port=5000)
+    start()
