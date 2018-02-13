@@ -41,6 +41,8 @@ def splitData(data_str):
 def getData():
     rfile = open("DATA.txt","r")
     data_list = rfile.readlines()#lista con cada linea del fichero en string como elemento de la lista
+    if not data_list:
+        return
     last_line = data_list[len(data_list) - 1]
     rfile.close()
 
@@ -52,7 +54,7 @@ def getData():
         info.fecha=data[0]
         info.hora=data[1]
         info.temperatura=data[3]
-        info.presion=data[5]
+        info.presion=data[5]/100
         info.humedad=data[7]
         info.velViento=data[9]
         info.precipitacion=data[11]
@@ -99,7 +101,7 @@ def sendData():
         "Direccion viento":info.dirViento}}
     return json.dumps(datos)
 
-@app.route('/api/estacion/montegancedo/alarm')   
+#@app.route('/api/estacion/montegancedo/alarm')   
 def start():
     app.run(host='0.0.0.0',port=5000)
     
