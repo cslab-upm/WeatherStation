@@ -1,0 +1,45 @@
+{
+	"$schema":"http://json-schema.org/draft-06/schema#",
+	"title":"Estacion meteorologica",
+	"description":"Estacion meteorologica del observatorio Francisco Sanchez",
+	"type":"object",
+	"properties":{
+		"Estacion":{
+			"type":"object",
+			"properties":{
+				"Hora":{
+					"type":"string",
+					"pattern":"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+				},
+				"Fecha":{
+					"type":"string",
+					"pattern":"^[0-9]{2}/[0-9]{2}/[0-9]{2}$"
+				},
+				"Temperatura":{
+					"type":"number"
+				},
+				"Velocidad viento":{
+					"type":"number"
+				},
+				"Presion":{
+					"type":"number"
+				},
+				"Humedad":{
+					"type":"number"
+				},
+				"Precipitacion":{
+					"type":"number"
+				},
+				"Direccion viento":{
+					"type":"string",
+					"enum":["S","N","E","W","SE",
+						"SW","NE","NW"]
+				},
+				"Estado":{
+					"type":"string",
+					"enum":["Operativo","No operativo"]
+				}
+			}
+		}
+	}	
+}

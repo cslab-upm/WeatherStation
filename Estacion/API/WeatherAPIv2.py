@@ -53,11 +53,11 @@ def getData():
 
         info.fecha=data[0]
         info.hora=data[1]
-        info.temperatura=data[3]
-        info.presion=data[5]/100
-        info.humedad=data[7]
-        info.velViento=data[9]
-        info.precipitacion=data[11]
+        info.temperatura=float(data[3])
+        info.presion=float(data[5])/100
+        info.humedad=float(data[7])
+        info.velViento=float(data[9])
+        info.precipitacion=float(data[11])
         dirViento_junk2=data[13]
 
         #dirViento llega con \n en su string, eliminamos
