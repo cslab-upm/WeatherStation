@@ -33,7 +33,7 @@
 				"Direccion viento":{
 					"type":"string",
 					"enum":["S","N","E","W","SE",
-						"SW","NE","NW"]
+						"SW","NE","NW","N/A"]
 				},
 				"Estado":{
 					"type":"string",
