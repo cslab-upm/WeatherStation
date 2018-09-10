@@ -39,9 +39,9 @@ def splitData(data_str):
     return datanojunk
 
 def getData():
-    rfile = open("DATA.txt","r")
+    rfile = open("DATA.txt","rw")
     data_list = rfile.readlines()#lista con cada linea del fichero en string como elemento de la lista
-    if not data_list:
+    if not data_list or len(data_list)==0:
         return
     last_line = data_list[len(data_list) - 1]
     rfile.close()
