@@ -1,16 +1,16 @@
  //////HEADERS//////
 #include <stdio.h>
 #include <string.h>
-#include <Wire.h>//comunicacion I2C
+#include <Wire.h> // I2C Communication
 #include <SD.h>
 #include <FreqCount.h>
-#include <SparkFunDS1307RTC.h>//RTC
-#include <BMP085.h>//sensor temp/pres
-#include <hh10d.hpp>//sensor humedad
+#include <SparkFunDS1307RTC.h> // RTC
+#include <BMP085.h> // termomenter/barometer
+#include <hh10d.hpp> // hygrometer
 
 /******INITIALIZATION******/
 
-#define INTERVAL 60// es el periodo entre publicacion de info en segundos
+#define INTERVAL 60 // The amount of seconds between publications
 unsigned long previousSegs = 0;
 unsigned long currentSegs;
 //////SD//////
@@ -19,58 +19,59 @@ String path;
 String anio,mes,dia,hora;
 
 //////XBEE//////
-/*Serial1 para comunicación*/
-char datos[80];//80 bytes de envío de datos
+/*Uses Serial1 for communication*/
+char datos[80]; //max 80 bytes per packet
 String strDatos,d,mon,y,h,m,s;
 
 //////RTC1307//////
-#define PRINT_EU_DATE//disposicion de la fecha dia/mes/año
+#define PRINT_EU_DATE // date formatted dd/mm/yy
 #define SQW_INPUT_PIN 2   // Input pin to read SQW
 #define SQW_OUTPUT_PIN 13 // LED to indicate SQW's state
 
 //////BMP085//////
-BMP085 bmp085;//objeto sensor
+BMP085 bmp085; // Sensor bmp085 for temperature and pression
 float temp=0.0;
 float pres=0.0;
 
 //////HH10D//////
+/* Hygrometer calibration
+*/
 const int HH10D_OFFSET(7732);
 const int HH10D_SENSITIVITY(402);
 float hum;
 
-//////SPARKFUN STATION////// ANEMOMETRO+VELETA+PLUVIOMETRO
-#define pinAnem 2
-#define pinPluviometro 3
-#define pinVeleta 4
+//////SPARKFUN STATION////// 
+#define pinAnem 2  // Anemometer pin
+#define pinPluviometro 3 // Pluviometer pin
+#define pinVeleta 4 // Weather vane pin
 #define pinReset 14
-volatile int cuentaAnem=0;//frecuencia recibida por el Anemometro
-volatile int cuentaPluv=0;//frecuencia recibida del Pluviometro
-float VelSp = 0.0;//Km/h del viento
-float pluv = 0.0;//precipitacion en mm
-String dir;// N NW W SW S SE E NE,también indica NNW, SSE, etc
-/******END OF INIT******/
+volatile int cuentaAnem=0; // Anemomenter frequency
+volatile int cuentaPluv=0; // Pluviometer frequency
+float VelSp = 0.0; // Wind speed in km/h
+float pluv = 0.0; //precipitation in mm
+String dir; // N NNW NW WNW W WSW SW SSW S SSE SE ESE E ENE NE NNE 
+/******END OF INIT******/ 
 
-/******SETUP******/
+/** SETUP
+ * Initialize sensor interfaces and radio communication
+ */ 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   initSD();
-  initXbee();//SERIAL 1 se inicializa, para la comunicacion por XBEE
+  initXbee();
   initRTC();
   initBmp085();
   initHH10D();
   initSparkStation();
-  Serial1.println("Sensores inicializados");  
+  Serial1.println(";Sensores inicializados");  
   delay(2000);
 }
 /******END OF SETUP******/
 
 /******LOOP******/
 void loop() {
-  // put your main code here, to run repeatedly:
-  
+  //  
   sensorSparkStation();
-
   currentSegs = (millis() / 1000);//envío del paquete en cada intervalo establecido
   if(currentSegs - previousSegs >= INTERVAL) {
     clockRTC();
@@ -300,7 +301,7 @@ String WindDirection(int pinAnalog){
     veleta="NW";
   }
   else if((s>=4.04 )&&(s<= 4.07)){
-    veleta="NWW";
+    veleta="WNW";
   }
   else if(s>=4.61&&s<=4.64){
     veleta="W";
@@ -312,7 +313,7 @@ String WindDirection(int pinAnalog){
     veleta="SW";
   }
   else if((s>=1.19 )&&(s<= 1.22)){
-    veleta="SWS";
+    veleta="SSW";
   }
   else if((s>=1.40 )&&(s<=1.43 )){
     veleta="S";
@@ -324,7 +325,7 @@ String WindDirection(int pinAnalog){
     veleta="SE";
   }
   else if((s>=0.30 )&&(s<=0.33 )){
-    veleta="SEE";
+    veleta="ESE";
   }
   else if(s>=0.44&&s<=0.47){
     veleta="E";
@@ -336,7 +337,7 @@ String WindDirection(int pinAnalog){
     veleta="NE";
   }
   else if((s>=1.98)&&(s<=2.01)){
-    veleta="NEN";
+    veleta="NNE";
   }
   else{
     veleta="N/A";
