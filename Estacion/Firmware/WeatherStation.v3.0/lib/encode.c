@@ -1,4 +1,4 @@
-#include <string.h>
+//#include <string.h>
 #include "encode.h"
 struct timestamp;
 struct weather;
@@ -98,7 +98,7 @@ void packet_bytes(int value, int n_bytes, char* packet);
  *         char* packet: output param which must be at least 16 bytes long.
  */
 void gen_packet(struct timestamp* ts, struct weather* w, char* packet){
-  // Force all most significant bytes to 1
+  // Force all most significant bits to 1
   int i;
   for(i = 0; i< 16; i++)
     packet[i] = (char) 0x80;

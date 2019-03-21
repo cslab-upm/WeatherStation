@@ -16,4 +16,4 @@ struct weather{
 };
 
 
-void gen_packet(struct timestamp*, struct weather*, char* packet);
+void gen_packet(struct timestamp* ts, struct weather* w, char* packet);

@@ -1,47 +1,40 @@
+#coding: utf-8
 #Mantiene la escucha constante a traves de serial.
 import serial
+import serial.tools.list_ports
 import time
 import sys
 
-puerto_serie = '/dev/ttyUSB0'
-sec_counter = 6 #security counter
-extension = ".txt"
-mes = "00"
-anio = "00"
-status = "Operativo"
-prev_time = 0.0
-curr_time = 0.0
-cicle_time = 180 #180 segundos de espera hasta cambiar el estado a No Operativo
-######LINUX######
+from decode import *
+
+
+csv_file = "weather.csv"
+log_file = "weather.txt"
+
+######FUNCTIONS######
+def storeStatus(status):
+    st_file = open("STATUS.txt","w")
+    st_file.write(status)
+    st_file.close()
+
+def seleccionar_puerto():
+    i = 0
+    ports = serial.tools.list_ports.comports()
+    if i == 1: #solo un puerto
+        return ports[0].device
+    for s in ports:
+        print("{}: {}\t\t{}".format(i,s.device,s.usb_description()))
+        i += 1
+    n_port =int( input("Introducir número para seleccionar puerto: "))
+    return ports[n_port].device
+ 
+puerto_serie = seleccionar_puerto()
+
 try:
     xbee=serial.Serial(puerto_serie,9600) #ACMx / USBx (x = 1 o 0)
 except serial.serialutil.SerialException as s:
     sys.stderr.write("{}\n".format(s))
     exit(-1)
-######WINDOWS#####
-#xbee=serial.Serial('COM7',9600) #comprobar el numero de COM
-
-######FUNCTIONS######
-def secureSerialData (serial):#cuenta que existan los caracteres referencia para
-#considerar el string de datos como no corrupto
-    counter=0#contador del parametro referencia en el envio de datos (#)
-    for x in serial:
-        if(x=='#'):
-            counter+=1
-        if(counter>=sec_counter):
-            break
-    return counter
-
-"""def splitData(data_str):
-    datawjunk=data_str.partition("######")#3 particiones se generan
-    #la ultima particion data[2] contiene lo existente a la derch. de ######
-    datanojunk=datawjunk[2].split("_")#divide los datos eliminando las _
-    return datanojunk"""
-
-def storeStatus(status):
-    st_file = open("STATUS.txt","w")
-    st_file.write(status)
-    st_file.close()
 
 ######LOOP######
 xbee.flushInput()
@@ -50,29 +43,31 @@ prev_time = time.time()
 while True:
     curr_time = time.time()
     #si la espera del serial se alarga el status cambia a No operativo
-    if((xbee.inWaiting()) and (curr_time-prev_time<cicle_time)):
+    if True: #((xbee.inWaiting()) and (curr_time-prev_time<cicle_time)):
         prev_time = curr_time
+        try:
+            serial_data = (xbee.readline())#recibe el string del objeto serial
+        except KeyboardInterrupt:
+            print("Saliendo...")
+            exit(0)
 
-        serial_data = (xbee.readline())#recibe el string del objeto serial
-        serial_data = serial_data.partition("//////")
-        package = serial_data[2]
+        ts,weather = decode(serial_data)
+        if ts is None or weather is None:
+            continue
+        log_str = str(ts) + str(weather) + "\n"
+        csv_str = ts.csv() + weather.csv() + "\n"
         print "\nPaquete recibido"
-        print(package)
-        if(secureSerialData(package)>=sec_counter):
-            wfile = open("DATA.txt","a+")
-            wfile.write(package)
-            wfile.close()
+        print(log_str)
+        wfile = open(log_file,"a+")
+        wfile.write(log_str)
+        wfile.close()
 
-            #status
-            status = "Operativo"
-            storeStatus(status)
-
-            print "Datos validos y guardados"
-        else:
-	    print "paquete recibido: "
-	    print package
-            print "Datos invalidos"
-    elif(curr_time-prev_time>=cicle_time):
-        prev_time = curr_time
-        status = "No operativo"
+        wfile = open(csv_file,"a+")
+        wfile.write(csv_str)
+        wfile.close()
+        
+        #status
+        status = "Operativo"
         storeStatus(status)
+
+       

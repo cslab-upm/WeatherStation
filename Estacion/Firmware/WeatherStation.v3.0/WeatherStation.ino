@@ -64,6 +64,11 @@ void setup() {
   initHH10D();
   initSparkStation();
   Serial1.println(";Sensores inicializados");  
+  
+/**
+ * It would be useful to prepare an interrupt every INTERVAL seconds,
+ * if possible, in order to minimize power consumption.
+ */
   delay(2000);
 }
 /******END OF SETUP******/

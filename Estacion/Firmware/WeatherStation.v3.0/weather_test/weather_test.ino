@@ -1,7 +1,4 @@
-/*
-File for testing all different components 
-*/
-
+//#define DEBUG
 // RTC 
 #include <SparkFunDS1307RTC.h>
 #include <Wire.h>
@@ -37,13 +34,13 @@ int windD;
 // Radio communication (XBEE)
 #include "encode.h"
 char packet[16];
-
+#define XBEE Serial1
 // Data structures
 struct timestamp ts;
 struct weather w;
 
 // Number of interrupt cycles to be asleep
-#define SLEEP_CYCLES 1 // about 28 seconds
+#define SLEEP_CYCLES 7 // about 28 seconds
 #define SLEEP_DURATION 4.09 //seconds
 volatile int cycles_so_far = 0;
 //Function declarations
@@ -65,23 +62,45 @@ void printStation(float, float, int);
 
 void setup(){
    //cli();
+  #ifdef DEBUG
   Serial.begin(57600);
   Serial.print("Setting up RTC...");
+  #endif
+
   setupRTC();
+
+  #ifdef DEBUG
   Serial.print("OK.\nSetting up BMP...");
+  #endif
+
   setupBMP();
+
+  #ifdef DEBUG
   Serial.print("OK.\nSetting up HH10D...");
+  #endif
+
   setupHH10D();
+
+  #ifdef DEBUG
   Serial.print("OK.\nSetting up Spark Station...");
+  #endif
+
   setupStation();
+
+  #ifdef DEBUG
   Serial.print("OK.\nPreparing Interrupts...");
+  #endif
+
   periodical_interrupt();
+
+  #ifdef DEBUG
   Serial.println("OK.");
+  #endif
+  Serial1.begin(9600);
+  Serial1.println("Setup finished");
   // sei();
 }
 volatile int awake = 1;
-// RTC variables
-int time[6];
 
 // BMP variables
 Adafruit_BMP085 bmp;
@@ -100,10 +119,18 @@ void loop(){
   readStation(&(w.prec),&(w.windS),&(w.windD));
   readBMP(&(w.temp),&(w.pres));
   readHum(&(w.hum));
+
+  // Encode and send the data over XBEE
+  gen_packet(&ts,&w,packet);
+  Serial1.println(packet);
+  #ifdef DEBUG
+  Serial.print(packet);
+
   printTime(ts);
   printBMP(w.temp,w.pres);
   printHum(w.hum);
   printStation(w.prec,w.windS,w.windD);
+  #endif
 //  sei();
   }
   enter_sleep();
@@ -189,6 +216,7 @@ void setupStation(){
   attachInterrupt(digitalPinToInterrupt(3), pluv_interrupt, FALLING);
   digitalWrite(RESET_PIN,HIGH);
 }
+
 /** PROC wind_dir
  *  PARAMS INT measurement: 0 to 1023 integer from adc of sparkfun 
  *                          wind vane.
