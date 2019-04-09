@@ -2,6 +2,7 @@
 #Mantiene la escucha constante a traves de serial.
 import serial
 import serial.tools.list_ports
+import json
 import time
 import sys
 
@@ -10,7 +11,7 @@ from decode import *
 
 csv_file = "weather.csv"
 log_file = "weather.txt"
-
+json_file="estacion.json"
 ######FUNCTIONS######
 def storeStatus(status):
     st_file = open("STATUS.txt","w")
@@ -35,7 +36,19 @@ try:
 except serial.serialutil.SerialException as s:
     sys.stderr.write("{}\n".format(s))
     exit(-1)
-
+def to_json(ts,weather): 
+  d ={"Estacion":{
+  "Hora": "{:2d}:{:2d}:{:2d}".format(ts.hour,ts.minute,ts.second),
+  "Fecha":"{}/{:2d}/{:2d}".format(ts.year,ts.month.ts.date),
+  "Temperatura":weather.temp,
+  "Presion": weather.pres,
+  "Humedad": weather.hum,
+  "Velocidad viento": weather.windS,
+  "Direccion viento": Weather.wind_dirs[weather.windD],
+  "Precipitacion":weather.prec,
+  "Estado":"Operativo"
+ }}
+ return d
 ######LOOP######
 xbee.flushInput()
 print("Esperando paquetes de datos...")
@@ -66,6 +79,9 @@ while True:
         wfile.write(csv_str)
         wfile.close()
         
+        wfile = open(json_file,"w+")
+        wfile.write(to_json(ts,weather))
+        wfile.close()
         #status
         status = "Operativo"
         storeStatus(status)

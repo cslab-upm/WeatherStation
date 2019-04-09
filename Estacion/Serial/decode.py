@@ -16,7 +16,7 @@ self.year, self.month, self.date, self.hour, self.minute, self.second))
 
 class Weather:
   wind_dirs = ["N","NNE","NE",'ENE','E','ESE','SE','SSE','S','SSW','SW','WSW'\
-'W','WNW','NW','NNW']
+'W','WNW','NW','NNW',"N/A"]
   def __init__(self,temp,pres,windS,windD,hum,prec):
     self.temp = temp
     self.pres = pres
@@ -44,8 +44,7 @@ def decode(packet):
   packet_bytes = [ord(c) & 0xFF for c in packet]
   if not valid_packet(packet_bytes):
     return (None, None)
-  print("Bytes: {}".format(packet_bytes))
-
+  
   year = 2000+(((packet_bytes[1] & 0x7f)) | ((packet_bytes[2]&0x7F) >> 5));
   month = (packet_bytes[2] >> 1) & 0xF;
   date = ((packet_bytes[2] & 1) <<4) | (((packet_bytes[3] & 0x7F) >>3) & 0xF);
@@ -62,7 +61,7 @@ def decode(packet):
 
   prec = (((packet_bytes[11] & 0x7F) << 7) | (packet_bytes[12] & 0x7F))/16;
   hum = packet_bytes[13] & 0x7F;
- 
+  print("Viento: {}".format(windD))
   return (Timestamp(year,month,date,hour,minute,second),\
 Weather(temp,pres,windS,windD,hum,prec))
   
