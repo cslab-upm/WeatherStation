@@ -13,6 +13,19 @@ csv_file = "weather.csv"
 log_file = "weather.txt"
 json_file="estacion.json"
 ######FUNCTIONS######
+def to_json(ts,weather): 
+  d ={"Estacion":{
+  "Hora": "{:2d}:{:2d}:{:2d}".format(ts.hour,ts.minute,ts.second),
+  "Fecha":"{}/{:2d}/{:2d}".format(ts.year,ts.month,ts.date),
+  "Temperatura":weather.temp,
+  "Presion": weather.pres,
+  "Humedad": weather.hum,
+  "Velocidad viento": weather.windS,
+  "Direccion viento": Weather.wind_dirs[weather.windD],
+  "Precipitacion":weather.prec,
+  "Estado":"Operativo"
+ }}
+  return json.dumps(d)
 def storeStatus(status):
     st_file = open("STATUS.txt","w")
     st_file.write(status)
@@ -36,19 +49,6 @@ try:
 except serial.serialutil.SerialException as s:
     sys.stderr.write("{}\n".format(s))
     exit(-1)
-def to_json(ts,weather): 
-  d ={"Estacion":{
-  "Hora": "{:2d}:{:2d}:{:2d}".format(ts.hour,ts.minute,ts.second),
-  "Fecha":"{}/{:2d}/{:2d}".format(ts.year,ts.month.ts.date),
-  "Temperatura":weather.temp,
-  "Presion": weather.pres,
-  "Humedad": weather.hum,
-  "Velocidad viento": weather.windS,
-  "Direccion viento": Weather.wind_dirs[weather.windD],
-  "Precipitacion":weather.prec,
-  "Estado":"Operativo"
- }}
- return d
 ######LOOP######
 xbee.flushInput()
 print("Esperando paquetes de datos...")
