@@ -167,9 +167,9 @@ void printTime(struct timestamp t){
    timeStr += "["+String(t.year) + "/" + String(t.month) + "/" +
               String(t.date) + " " + String(t.hour) + ":" +
               String(t.minute) + ":" + String(t.second) + "]";
-
+   #ifdef DEBUG
    Serial.print(timeStr);
-
+   #endif  
 }
 
 void setupBMP(){
@@ -182,9 +182,9 @@ void readBMP(int* temp, float* pres){
 void printBMP(int temp, float pres){
   String bmpStr= String();
   bmpStr += "t = " + String(temp) + "ºC, p = " + String(pres) + "hPa, ";
-
+  #ifdef DEBUG
   Serial.print(bmpStr);
-
+  #endif
 }
 
 void setupHH10D(void){
@@ -197,7 +197,9 @@ void readHum(int* hum){
 void printHum(int hum){
   String humStr = String();
   humStr += "h = " + String(hum) + "% ,";
+  #ifdef DEBUG
   Serial.print(humStr);
+  #endif
 }
 
 void anem_interrupt(){
@@ -277,7 +279,9 @@ int wind_dir(int measurement ){
   }
   else{
     result=-1;//"N/A";
+    #ifdef DEBUG
     Serial.println("\n\nERROR: voltaje = " + String(voltage));
+    #endif
   }
   return result;
 }
@@ -295,8 +299,8 @@ void printStation(float prec, float windS, int windD){
   String sparkStr= String();
   sparkStr += "prec = " + String(prec) + "mm/min, ws = " + String(windS) + "km/h, wd = " + 
                String(windD);
-
+#ifdef DEBUG
   Serial.println(sparkStr);
-
+#endif
 
 }
