@@ -41,9 +41,10 @@ def seleccionar_puerto():
         i += 1
     n_port =int( input("Introducir número para seleccionar puerto: "))
     return ports[n_port].device
- 
-puerto_serie = seleccionar_puerto()
-
+if len(sys.argv) == 1:
+  puerto_serie = seleccionar_puerto()
+else:
+  puerto_serie = sys.argv[1]
 try:
     xbee=serial.Serial(puerto_serie,9600) #ACMx / USBx (x = 1 o 0)
 except serial.serialutil.SerialException as s:
