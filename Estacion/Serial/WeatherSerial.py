@@ -8,6 +8,7 @@ import sys
 
 from decode import *
 
+import influx
 
 csv_file = "weather.csv"
 log_file = "weather.txt"
@@ -86,5 +87,5 @@ while True:
         #status
         status = "Operativo"
         storeStatus(status)
-
+        influx.send_data(weather)
        
